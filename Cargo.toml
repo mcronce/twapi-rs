@@ -12,12 +12,12 @@ documentation = "https://docs.rs/twapi"
 edition = "2018"
 
 [dependencies]
-async-trait = "~0.1.48"
-base64 = "~0.13.0"
-url = "~2.2.1"
+async-trait = "0.1.48"
+base64 = "0.13.0"
+url = "2.2.1"
 serde_json = "^1.0"
-ipnetwork = { version = "~0.17.0", optional = true }
-serde_urlencoded = "~0.7.0"
+ipnetwork = { version = "0.17.0", optional = true }
+serde_urlencoded = "0.7.0"
 twapi-reqwest = "^0.2"
 #twapi-reqwest = { path = "../twapi-reqwest-rs" }
 tokio = { version = "^1", features = ["time"] }
