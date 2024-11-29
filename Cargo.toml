@@ -20,7 +20,7 @@ ipnetwork = { version = "0.20.0", optional = true }
 serde_urlencoded = "0.7.0"
 twapi-reqwest = "^0.3"
 #twapi-reqwest = { path = "../twapi-reqwest-rs" }
-tokio = { version = "^1", features = ["time"] }
+tokio = { version = "^1", features = ["fs", "time"] }
 
 [features]
 account-activity = [ "ipnetwork" ]

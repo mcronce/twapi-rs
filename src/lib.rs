@@ -1,10 +1,8 @@
 //! A simple Twitter library. This is easy for customize.
 #![allow(clippy::ptr_arg)] // Underlying twapi-reqwest requires &Vec args
 use async_trait::async_trait;
-use std::{
-    io::{BufReader, Cursor, Read},
-    time,
-};
+use std::{io::Cursor, time};
+use tokio::io::{AsyncReadExt, BufReader};
 use twapi_reqwest::reqwest::{
     multipart::{Form, Part},
     Error, Response,
@@ -276,7 +274,7 @@ pub trait Twapi {
         file: &str,
         additional_owners: Option<String>,
     ) -> Result<TwapiResponse, TwapiError> {
-        let buffer = std::fs::read(file).unwrap();
+        let buffer = tokio::fs::read(file).await.unwrap();
         let cursor = Cursor::new(buffer);
 
         let part = Part::bytes(cursor.into_inner());
@@ -303,7 +301,7 @@ pub trait Twapi {
         media_category: &str,
         additional_owners: Option<String>,
     ) -> Result<TwapiResponse, TwapiError> {
-        let metadata = std::fs::metadata(file)?;
+        let metadata = tokio::fs::metadata(file).await?;
         let file_size = metadata.len();
         let form = Form::new()
             .text("command", "INIT")
@@ -339,7 +337,7 @@ pub trait Twapi {
         };
 
         let mut segment_index = 0;
-        let f = std::fs::File::open(file)?;
+        let f = tokio::fs::File::open(file).await?;
         let mut reader = BufReader::new(f);
         while segment_index * 5000000 < file_size {
             let read_size: usize = if (segment_index + 1) * 5000000 < file_size {
@@ -348,7 +346,7 @@ pub trait Twapi {
                 (file_size - segment_index * 5000000) as usize
             };
             let mut cursor = Cursor::new(vec![0; read_size]);
-            reader.read_exact(cursor.get_mut())?;
+            reader.read_exact(cursor.get_mut()).await?;
             let form = Form::new()
                 .text("command", "APPEND")
                 .text("media_id", media_id.clone())
