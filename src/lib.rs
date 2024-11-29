@@ -275,9 +275,8 @@ pub trait Twapi {
         additional_owners: Option<String>,
     ) -> Result<TwapiResponse, TwapiError> {
         let buffer = tokio::fs::read(file).await.unwrap();
-        let cursor = Cursor::new(buffer);
 
-        let part = Part::bytes(cursor.into_inner());
+        let part = Part::bytes(buffer);
         let form = Form::new().part("media", part);
         let form = if let Some(additional_owners) = additional_owners {
             form.text("additional_owners", additional_owners)
