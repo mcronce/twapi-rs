@@ -1,4 +1,5 @@
 //! A simple Twitter library. This is easy for customize.
+#![allow(clippy::ptr_arg)] // Underlying twapi-reqwest requires &Vec args
 use async_trait::async_trait;
 use std::{
     io::{BufReader, Cursor, Read},
@@ -31,10 +32,7 @@ impl TwapiResponse {
             Ok(json) => Some(json),
             Err(_) => None,
         };
-        TwapiResponse {
-            status_code: status_code,
-            json: json,
-        }
+        TwapiResponse { status_code, json }
     }
 
     pub fn is_success(&self) -> bool {
@@ -42,10 +40,7 @@ impl TwapiResponse {
     }
 
     pub fn copy_json_value(&self) -> Option<serde_json::Value> {
-        match &self.json {
-            Some(ref json) => Some(json.clone()),
-            None => None,
-        }
+        self.json.clone()
     }
 }
 
@@ -256,7 +251,7 @@ pub trait Twapi {
     ) -> Result<TwapiResponse, TwapiError> {
         loop {
             let check_after_secs = {
-                let result = self.get_media_upload(&media_id).await?;
+                let result = self.get_media_upload(media_id).await?;
                 if !result.is_success() {
                     return Ok(result);
                 }
@@ -281,12 +276,8 @@ pub trait Twapi {
         file: &str,
         additional_owners: Option<String>,
     ) -> Result<TwapiResponse, TwapiError> {
-        let metadata = std::fs::metadata(file).unwrap();
-        let file_size = metadata.len();
-        let f = std::fs::File::open(file).unwrap();
-        let mut cursor = Cursor::new(vec![0; file_size as usize]);
-        let mut reader = BufReader::new(f);
-        reader.read(cursor.get_mut()).unwrap();
+        let buffer = std::fs::read(file).unwrap();
+        let cursor = Cursor::new(buffer);
 
         let part = Part::bytes(cursor.into_inner());
         let form = Form::new().part("media", part);
@@ -357,7 +348,7 @@ pub trait Twapi {
                 (file_size - segment_index * 5000000) as usize
             };
             let mut cursor = Cursor::new(vec![0; read_size]);
-            reader.read(cursor.get_mut())?;
+            reader.read_exact(cursor.get_mut())?;
             let form = Form::new()
                 .text("command", "APPEND")
                 .text("media_id", media_id.clone())
@@ -371,7 +362,7 @@ pub trait Twapi {
                     form,
                 )
                 .await?;
-            segment_index = segment_index + 1;
+            segment_index += 1;
             let result = TwapiResponse::new(response).await;
             if !result.is_success() {
                 return Ok(result);
@@ -395,7 +386,7 @@ pub trait Twapi {
         }
         let json = result.copy_json_value().unwrap();
         let processing_info = json.get("processing_info");
-        if processing_info == None {
+        if processing_info.is_none() {
             Ok(result)
         } else {
             // check only processing_info included.
