@@ -1,7 +1,7 @@
 //! A simple Twitter library. This is easy for customize.
 #![allow(clippy::ptr_arg)] // Underlying twapi-reqwest requires &Vec args
 use core::future::Future;
-use std::{io::Cursor, time};
+use std::time;
 
 use tokio::io::{AsyncReadExt, BufReader};
 use twapi_reqwest::reqwest::{
@@ -392,13 +392,13 @@ pub trait Twapi: Send + Sync {
                 } else {
                     (file_size - segment_index * 5000000) as usize
                 };
-                let mut cursor = Cursor::new(vec![0; read_size]);
-                reader.read_exact(cursor.get_mut()).await?;
+                let mut buffer = vec![0; read_size];
+                reader.read_exact(&mut buffer).await?;
                 let form = Form::new()
                     .text("command", "APPEND")
                     .text("media_id", media_id.clone())
                     .text("segment_index", segment_index.to_string())
-                    .part("media", Part::bytes(cursor.into_inner()));
+                    .part("media", Part::bytes(buffer));
 
                 let response = self
                     .multipart(
