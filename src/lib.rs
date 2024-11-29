@@ -554,7 +554,7 @@ impl ApplicationAuth {
 #[async_trait]
 impl Twapi for ApplicationAuth {
     async fn get(&self, uri: &str, query_options: &Vec<(&str, &str)>) -> TResult {
-        twapi_reqwest::v2::get(uri, query_options, &self.bearer_token).await
+        twapi_reqwest::v2::get(uri, query_options, &self.bearer_token, None).await
     }
 
     async fn post(
@@ -563,19 +563,19 @@ impl Twapi for ApplicationAuth {
         query_options: &Vec<(&str, &str)>,
         form_options: &Vec<(&str, &str)>,
     ) -> TResult {
-        twapi_reqwest::v2::post(uri, query_options, form_options, &self.bearer_token).await
+        twapi_reqwest::v2::post(uri, query_options, form_options, &self.bearer_token, None).await
     }
 
     async fn multipart(&self, uri: &str, query_options: &Vec<(&str, &str)>, form: Form) -> TResult {
-        twapi_reqwest::v2::multipart(uri, query_options, form, &self.bearer_token).await
+        twapi_reqwest::v2::multipart(uri, query_options, form, &self.bearer_token, None).await
     }
 
     async fn put(&self, uri: &str, query_options: &Vec<(&str, &str)>) -> TResult {
-        twapi_reqwest::v2::put(uri, query_options, &self.bearer_token).await
+        twapi_reqwest::v2::put(uri, query_options, &self.bearer_token, None).await
     }
 
     async fn delete(&self, uri: &str, query_options: &Vec<(&str, &str)>) -> TResult {
-        twapi_reqwest::v2::delete(uri, query_options, &self.bearer_token).await
+        twapi_reqwest::v2::delete(uri, query_options, &self.bearer_token, None).await
     }
 
     async fn json(
@@ -584,7 +584,7 @@ impl Twapi for ApplicationAuth {
         query_options: &Vec<(&str, &str)>,
         json: &serde_json::Value,
     ) -> TResult {
-        twapi_reqwest::v2::json(uri, query_options, json, &self.bearer_token).await
+        twapi_reqwest::v2::json(uri, query_options, json, &self.bearer_token, None).await
     }
 }
 
@@ -622,6 +622,7 @@ impl Twapi for UserAuth {
             &self.consumer_secret,
             &self.access_token,
             &self.access_token_secret,
+            None,
         )
         .await
     }
@@ -640,6 +641,7 @@ impl Twapi for UserAuth {
             &self.consumer_secret,
             &self.access_token,
             &self.access_token_secret,
+            None,
         )
         .await
     }
@@ -653,6 +655,7 @@ impl Twapi for UserAuth {
             &self.consumer_secret,
             &self.access_token,
             &self.access_token_secret,
+            None,
         )
         .await
     }
@@ -665,6 +668,7 @@ impl Twapi for UserAuth {
             &self.consumer_secret,
             &self.access_token,
             &self.access_token_secret,
+            None,
         )
         .await
     }
@@ -677,6 +681,7 @@ impl Twapi for UserAuth {
             &self.consumer_secret,
             &self.access_token,
             &self.access_token_secret,
+            None,
         )
         .await
     }
@@ -695,6 +700,7 @@ impl Twapi for UserAuth {
             &self.consumer_secret,
             &self.access_token,
             &self.access_token_secret,
+            None,
         )
         .await
     }
