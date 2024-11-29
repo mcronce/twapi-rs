@@ -1,3 +1,11 @@
+## Unreleased
+- Loosened dependency version requirements for `base64`, `url`, and `serde_urlencoded`
+- Update depenendcy major versions across the board
+- Remove `async-trait` in favor of native async traits
+- Use async filesystem I/O in async functions
+- Simplify file I/O for media uploads
+- Cleanup assorted Clippy lints
+
 ## 0.7.0 (2021/03/26)
 - updated twapi-reqwest 0.0
 - updated tokio 1.0
