@@ -12,7 +12,6 @@ documentation = "https://docs.rs/twapi"
 edition = "2018"
 
 [dependencies]
-async-trait = "0.1.48"
 base64 = "0.22.1"
 url = "2.2.1"
 serde_json = "^1.0"
@@ -24,3 +23,4 @@ tokio = { version = "^1", features = ["fs", "time"] }
 
 [features]
 account-activity = [ "ipnetwork" ]
+
